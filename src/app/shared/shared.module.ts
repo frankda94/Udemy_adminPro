@@ -5,6 +5,7 @@ import { NoPageFoundComponent } from './no-page-found/no-page-found.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { PipesModule } from '../pipes/pipes.module';
 
 @NgModule({
     declarations: [
@@ -21,7 +22,8 @@ import { CommonModule } from '@angular/common';
     ],
     imports: [
         RouterModule,
-        CommonModule
+        CommonModule,
+        PipesModule
     ]
 })
 
