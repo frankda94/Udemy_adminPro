@@ -18,7 +18,7 @@ export class UsuariosComponent implements OnInit {
 
   constructor(
     private usuarioService: UsuarioService,
-    public modalUploadService: ModalUploadService
+    public modalUploadService: ModalUploadService,
   ) { }
 
   ngOnInit() {
@@ -42,7 +42,6 @@ export class UsuariosComponent implements OnInit {
   cambiarDesde(valor: number) {
 
     let desde = this.desde + valor;
-    console.log(desde);
 
     if (desde >= this.totalRegistros) {
       return;
@@ -70,7 +69,6 @@ export class UsuariosComponent implements OnInit {
   }
 
   borrarUsuario(usuario: Usuario) {
-    console.log();
     if (usuario._id === this.usuarioService.usuario._id) {
       swal('No se puede borrar usuario', 'no se puede borrar así mismo', 'error')
       return;
@@ -82,11 +80,9 @@ export class UsuariosComponent implements OnInit {
       buttons: ['aceptar', 'cancelar'],
       dangerMode: true,
     }).then(borrar => {
-      console.log(borrar)
       if (!borrar) {
         this.usuarioService.borrarUsuario(usuario._id)
           .subscribe(borrado => {
-            console.log(borrado);
             this.cargarUsuarios();
           })
       }
@@ -96,7 +92,6 @@ export class UsuariosComponent implements OnInit {
   actualizarRoleUsuario(usuario: Usuario) {
     this.usuarioService.actualizarUsuario(usuario)
       .subscribe(res => {
-        console.log(res);
       })
   }
 
