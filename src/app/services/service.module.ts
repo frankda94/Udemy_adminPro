@@ -2,10 +2,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalUploadService } from '../components/modal-upload/modal-upload.service';
 import {
+  LoginGuardGuard,
+  AdminGuard,
   SettingsService,
   SidebarService,
   SharedService,
-  LoginGuardGuard,
   UsuarioService,
   HospitalService,
   MedicoService,
@@ -20,10 +21,11 @@ import {
     // HttpClient
   ],
   providers: [
+    LoginGuardGuard,
+    AdminGuard,
     SettingsService,
     SidebarService,
     SharedService,
-    LoginGuardGuard,
     UsuarioService,
     HospitalService,
     MedicoService,
