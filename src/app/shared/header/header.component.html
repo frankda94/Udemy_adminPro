@@ -149,24 +149,24 @@
         <!-- ============================================================== -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <img [src]="usuario.img | imagen" alt="user" class="profile-pic" /></a>
+            <img [src]="usuario.imagenUrl" alt="user" class="profile-pic" /></a>
           <div class="dropdown-menu dropdown-menu-right animated fadeIn">
             <ul class="dropdown-user">
               <li>
-                <div class="dw-user-box" align="center">
+                <div class="dw-user-box align-self-center" >
                   <div class="u-img">
-                    <img [src]="usuario.img | imagen" alt="user" />
+                    <img [src]="usuario.imagenUrl" alt="user" />
                   </div>
                   <div class="u-text">
                     <h4>{{usuario.nombre}}</h4>
-                    <p class="text-muted">{{usuario.email}}</p>
-                    <a routerLink="/perfil" class="btn btn-rounded btn-danger btn-sm">Ver Perfil</a>
+                    <p class="text-muted">{{usuario.email | slice:0:25}} {{(usuario.email.length > 20) ? '...': ''}}</p>
+                    <a routerLink="perfil" class="btn btn-rounded btn-danger btn-sm">Ver Perfil</a>
                   </div>
                 </div>
               </li>
               <li role="separator" class="divider"></li>
               <li>
-                <a routerLink="/perfil"><i class="ti-user"></i> Ver perfil</a>
+                <a routerLink="perfil"><i class="ti-user"></i> Ver perfil</a>
               </li>
               <li>
                 <a href="#"><i class="ti-wallet"></i> My Balance</a>
@@ -176,7 +176,7 @@
               </li>
               <li role="separator" class="divider"></li>
               <li>
-                <a href="#"><i class="ti-settings"></i> Account Setting</a>
+                <a routerLinkActive="active" routerLink="account-settings"><i class="ti-settings"></i> Account Setting</a>
               </li>
               <li role="separator" class="divider"></li>
               <li>

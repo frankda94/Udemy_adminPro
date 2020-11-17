@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivationEnd } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { Title, MetaDefinition, Meta } from '@angular/platform-browser';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-breadcrumbs',
@@ -9,25 +10,30 @@ import { Title, MetaDefinition, Meta } from '@angular/platform-browser';
   styles: [
   ],
 })
-export class BreadcrumbsComponent implements OnInit {
+export class BreadcrumbsComponent implements OnInit, OnDestroy {
 
-  data: any;
+  titulo: string;
+  public tituloSubs$: Subscription;
   //Title ==> personalizar pestaña con titulo indicado
   //Meta ==> metaTags
-  constructor(private router: Router, private title: Title, private meta: Meta) {
-    this.getDataRoute().subscribe(dataResponse => {
-      this.data = dataResponse
-      this.title.setTitle(this.data.titulo);
+  constructor(private router: Router, private meta: Meta) {
+    this.tituloSubs$ = this.getDataRoute().subscribe(({ titulo }) => {
+      this.titulo = titulo;
 
       const metaTag: MetaDefinition = {
         name: 'description',
-        content: this.data.titulo,
+        content: this.titulo,
       };
       this.meta.updateTag(metaTag);
     });
   }
 
-  ngOnInit(): void {
+  ngOnDestroy() {
+    this.tituloSubs$.unsubscribe();
+  }
+
+  ngOnInit() {
+
   }
 
   getDataRoute() {

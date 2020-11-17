@@ -1,20 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import Swal from 'sweetalert2';
+
 import { Hospital } from '../../models/hospital.model';
 import { HospitalService } from '../../services/hospitales/hospital.service';
 import { ModalUploadService } from '../../components/modal-upload/modal-upload.service';
-import swal from 'sweetalert';
+import { delay } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-hospitales',
   templateUrl: './hospitales.component.html',
   styleUrls: ['./hospitales.component.css']
 })
-export class HospitalesComponent implements OnInit {
+export class HospitalesComponent implements OnInit, OnDestroy {
 
   cargando: boolean = true;
   hospitales: Hospital[] = [];
   desde: number = 0;
   totalRegistros: number = 0;
+  imgSubscribe: Subscription;
 
   constructor(
     private hospitalService: HospitalService,
@@ -23,37 +27,43 @@ export class HospitalesComponent implements OnInit {
 
   ngOnInit() {
     this.cargarHospitales();
-    this.modalUploadService.notificacion
-      .subscribe(resp => {
+    this.imgSubscribe = this.modalUploadService.notificacion
+      .pipe(
+        delay(300)
+      )
+      .subscribe(() => {
         this.cargarHospitales();
       })
   }
 
+  ngOnDestroy (){
+    this.imgSubscribe.unsubscribe();
+  }
+
   cargarHospitales() {
     this.cargando = true;
-    this.hospitalService.cargarHospitales(this.desde, 3)
-      .subscribe((result: any) => {
+    this.hospitalService.cargarHospitales(this.desde)
+      .subscribe(result => {
         this.hospitales = result.hospitales;
         this.totalRegistros = result.total;
         this.cargando = false;;
       });
   }
 
-  crearHospital() {
-    swal({
-      title: 'crear hospital',
-      text: 'Ingrese el nombre del hospital',
-      content: { element: "input" },
-      icon: 'info',
-      buttons: ['cancelar', 'crear'],
-      dangerMode: true
-    }).then((valor) => {
-      if (!valor || valor.length === 0) {
-        return;
-      }
-      this.hospitalService.crearHospital(valor)
-        .subscribe(resp => { this.cargarHospitales() })
+  async crearHospital() {
+    const { value = '' } = await Swal.fire<string>({
+      title: 'Crear Hospital',
+      text: 'Ingrese el nombre del nuevo hospital',
+      input: 'text',
+      inputPlaceholder: 'Nombre del hospital',
+      showCancelButton: true,
     })
+    if (value.trim().length > 0) {
+      this.hospitalService.crearHospital(value)
+        .subscribe((hospital: any) => {
+          this.hospitales.push(hospital.hospital)
+        })
+    }
   }
 
   buscarHospitales(termino: string) {
@@ -64,7 +74,7 @@ export class HospitalesComponent implements OnInit {
     }
 
     this.cargando = true;
-    this.hospitalService.buscarHospital(termino)
+    this.hospitalService.buscarHospitales(termino)
       .subscribe((hospitales: any) => {
         this.hospitales = hospitales;
         this.cargando = false;
@@ -72,26 +82,29 @@ export class HospitalesComponent implements OnInit {
   }
 
   actualizarHospital(hospital: Hospital) {
+    this.cargando = true;
     this.hospitalService.actualizarHospital(hospital).
       subscribe(res => {
-      });
+        Swal.fire('Actualizado', hospital.nombre, 'success');
+        this.cargando = false;
+      }, 
+      (err) => {
+        Swal.fire('Error al actualizar', err, 'error');
+        this.cargando = false;
+      }
+      );
   }
 
   borrarHospital(hospital: Hospital) {
-    swal({
-      title: "Estas seguro de eliminar el hospital",
-      text: 'Una vez eliminado el hospital ' + hospital.nombre + ' no podrá ser recuperado',
-      icon: 'warning',
-      buttons: ['aceptar', 'cancelar'],
-      dangerMode: true,
-    }).then(borrar => {
-      if (!borrar) {
-        this.hospitalService.borrarHospital(hospital._id).
-          subscribe(res => {
-            this.cargarHospitales();
-          });
-      }
-    })
+    this.cargando = true;
+    this.hospitalService.borrarHospital(hospital._id).
+      subscribe(() => {
+        this.cargarHospitales();
+        Swal.fire('Eliminado', hospital.nombre, 'success');
+      }, (err) => {
+        Swal.fire('Error al eliminar', err, 'error');
+        this.cargando = false;
+      });
   }
 
   mostrarModal(id: string) {

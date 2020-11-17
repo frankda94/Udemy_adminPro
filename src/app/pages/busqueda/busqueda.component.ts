@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { URL_SERVICIOS } from '../../config/config';
 import { Usuario } from '../../models/usuario.model';
 import { Medico } from '../../models/medico.model';
 import { Hospital } from '../../models/hospital.model';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-busqueda',
@@ -31,7 +31,7 @@ export class BusquedaComponent implements OnInit {
   }
 
   buscar(termino: string) {
-    let url = URL_SERVICIOS + '/busqueda/todo/' + termino;
+    let url = environment.base_url + '/todo/' + termino;
     this.http.get(url).
       subscribe((result: any) => {
         this.usuarios = result.usuarios;

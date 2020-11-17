@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MedicoService } from '../../services/medicos/medico.service';
 import { Medico } from 'src/app/models/medico.model';
-import swal from 'sweetalert';
+import Swal from 'sweetalert2';
+import { ModalUploadService } from '../../components/modal-upload/modal-upload.service';
+import { Subscription } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-medicos',
@@ -9,25 +12,41 @@ import swal from 'sweetalert';
   styles: [
   ],
 })
-export class MedicosComponent implements OnInit {
+export class MedicosComponent implements OnInit, OnDestroy {
 
+  imgSubscribe: Subscription;
   medicos: Medico[] = [];
   desde: number = 0;
   totalRegistros: number = 0;
+  cargando: boolean = true;
 
-  constructor(public medicoService: MedicoService) { }
+  constructor(
+    public medicoService: MedicoService,
+    private modalUploadService: ModalUploadService,) { }
 
   ngOnInit() {
     this.cargarMedicos();
+    this.imgSubscribe = this.modalUploadService.notificacion
+      .pipe(
+        delay(300)
+      )
+      .subscribe(() => {
+        this.cargarMedicos();
+      })
+  }
+
+  ngOnDestroy() {
+    this.imgSubscribe.unsubscribe();
   }
 
   cargarMedicos() {
+    this.cargando = true;
     this.medicoService.cargarMedicos(this.desde).
       subscribe((resp: any) => {
         this.medicos = resp.medicos
-        this.totalRegistros = resp.total;
+        this.totalRegistros = this.medicos.length;
+        this.cargando = false;
       });
-
   }
 
   buscarMedico(termino: string) {
@@ -36,25 +55,28 @@ export class MedicosComponent implements OnInit {
       this.cargarMedicos();
       return;
     }
-    this.medicoService.buscarMedicos(termino).
-      subscribe(medicos => this.medicos = medicos);
+    this.medicoService.buscarMedicos(termino)
+      .subscribe(medicos => {
+        this.medicos = medicos;
+        this.cargando = false
+      });
+  }
+
+  mostrarModal(id: string) {
+    this.modalUploadService.mostrarModal('medicos', id);
   }
 
 
   borrarMedico(medico: Medico) {
-    swal({
-      title: "Estas seguro de eliminar el médico",
-      text: 'Una vez eliminado el médico ' + medico.nombre + ' no podrá ser recuperado',
-      icon: 'warning',
-      buttons: ['aceptar', 'cancelar'],
-      dangerMode: true,
-    }).then(borrar => {
-      if (!borrar) {
-        this.medicoService.borrarMedico(medico._id).
-          subscribe(() => this.cargarMedicos());
-      }
-    })
-
+    this.cargando = true;
+    this.medicoService.borrarMedico(medico._id).
+      subscribe(() => {
+        this.cargarMedicos();
+        Swal.fire('Eliminado', medico.nombre, 'success');
+      }, (err) => {
+        Swal.fire('Error al eliminar', err, 'error');
+        this.cargando = false;
+      });
   }
 
 

@@ -6,15 +6,9 @@ import { UsuarioService } from '../usuarios/usuario.service';
 })
 export class SidebarService {
 
-
-  menu: any[] = [];
-
-  constructor(
-    public usuarioService: UsuarioService) {
-
-  }
+  menu = [];
 
   cargarMenu() {
-    this.menu = this.usuarioService.menu;
+    this.menu = JSON.parse(localStorage.getItem('menu')) || [];
   }
 }

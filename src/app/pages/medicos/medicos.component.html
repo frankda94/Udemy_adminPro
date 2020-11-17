@@ -2,18 +2,29 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <input #input (keyup)="buscarMedico(input.value)" type="text" class="form-control" placeholder="buscar hospitales...">
+                <input #input (keyup)="buscarMedico(input.value)" type="text" class="form-control" placeholder="buscar medicos...">
             </div>
         </div>
     </div>
 </div>
 
-<div class="row">
+
+<div class="row-1 animated fadeIn" *ngIf="cargando">
+    <div class="alert alert-warning text-center">
+        <strong>Cargando</strong>
+        <br>
+        <i class="fa fa-refresh fa-spin fa-2x"></i>
+        <br>
+        <span>espere por favor</span>
+    </div>
+</div>
+
+<div class="row animated fadeIn" *ngIf="!cargando">
     <div class="col-12">
         <div class="card">
             <div class="card-body">
                 <div class="text-right">
-                    <button [routerLink]="['/medico', 'nuevo']" type="button" class="btn waves-purple">
+                    <button [routerLink]="['/dashboard/medico', 'nuevo']" type="button" class="btn waves-purple">
                         <i class="fa fa-plus"></i>
                         Crear Médico
                     </button>
@@ -22,24 +33,23 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>foto</th>
-                            <th>médico</th>
-                            <th>hospital</th>
-                            <th></th>
+                            <th>Foto</th>
+                            <th>Médico</th>
+                            <th>Hospital</th>
+                            <th class="w-10 text-nowrap"> Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let medico of medicos">
-                            <td>
-                                <img [src]="medico.img | imagen: 'medico'" class="img-50 img-circle">
+                            <td class="text-center">
+                                <img (click)="mostrarModal(medico._id)" [src]="medico.img | imagen: 'medicos'" class="img-50 img-circle pointer">
                             </td>
-                            <td>{{medico.nombre}}</td>
+                            <td>{{medico.nombre }}</td>
                             <td>{{medico.hospital.nombre}}</td>
                             <td>
-                                <button [routerLink]="['/medico', medico._id]" class="btn btn-primary">
+                                <button [routerLink]="['/dashboard/medico', medico._id]" class="btn btn-primary">
                                     <i class="fa fa-save"></i>
                                 </button>
-
                                 <button (click)="borrarMedico(medico)" class="btn btn-danger">
                                     <i class="fa fa-trash-o"></i>
                                 </button>

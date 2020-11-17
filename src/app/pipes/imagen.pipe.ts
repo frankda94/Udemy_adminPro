@@ -1,31 +1,33 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { URL_SERVICIOS } from '../config/config';
+import { environment } from 'src/environments/environment';
 
 @Pipe({
-  name: 'imagen'
+    name: 'imagen'
 })
 export class ImagenPipe implements PipeTransform {
 
-  transform(img: string, tipo: string = 'usuario'): any {
+    transform(img: string, tipo: 'usuarios' | 'medicos' | 'hospitales'): string {
 
-    let url = URL_SERVICIOS + '/img/';
-    if (!img) {
-      return url + '/usuarios/xxx';
-    }
-    if (img.indexOf('https') >= 0) {
-      return img;
-    }
+        let url = environment.base_url + '/uploads/';
 
-    switch (tipo) {
-      case 'usuario':
-        return url += 'usuarios/' + img;
-      case 'medico':
-        return url += 'medicos/' + img;
-      case 'hospital':
-        return url += 'hospitales/' + img;
-      default:
-        return url += 'usuarios/xxx';
+        if (!img) {
+            return url + 'usuarios/xxx';
+        }
+
+        if (img.includes('https')) {
+            return img;
+        }
+
+        switch (tipo) {
+            case 'usuarios':
+                return url += 'usuarios/' + img;
+            case 'medicos':
+                return url += 'medicos/' + img;
+            case 'hospitales':
+                return url += 'hospitales/' + img;
+            default:
+                return url += 'usuarios/xxx';
+        }
     }
-  }
 
 }

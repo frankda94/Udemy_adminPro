@@ -4,7 +4,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ProgressComponent } from './progress/progress.component';
 import { Graficas1Component } from './graficas1/graficas1.component';
 import { SharedModule } from '../shared/shared.module';
-import { PAGES_ROUTES } from './pages.routes';
 import { IncrementadorComponent } from '../components/incrementador/incrementador.component';
 import { ChartsModule } from 'ng2-charts';
 import { GraficoDonaComponent } from '../components/grafico-dona/grafico-dona.component';
@@ -19,11 +18,12 @@ import { HospitalesComponent } from './hospitales/hospitales.component';
 import { MedicosComponent } from './medicos/medicos.component';
 import { MedicoComponent } from './medicos/medico.component';
 import { BusquedaComponent } from './busqueda/busqueda.component';
-
+import { RouterModule } from '@angular/router';
+import { PagesComponent } from './pages.component';
 
 @NgModule({
     declarations: [
-        // PagesComponent,
+        PagesComponent,
         DashboardComponent,
         ProgressComponent,
         Graficas1Component,
@@ -44,15 +44,16 @@ import { BusquedaComponent } from './busqueda/busqueda.component';
         DashboardComponent,
         ProgressComponent,
         Graficas1Component,
+        PagesComponent
     ],
     imports: [
         SharedModule,
-        PAGES_ROUTES,
+        RouterModule,
         FormsModule,
         ChartsModule,
         PipesModule,
         CommonModule
-    ]
+    ],
 })
 
 export class PagesModule { }

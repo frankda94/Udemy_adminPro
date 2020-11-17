@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { URL_SERVICIOS } from '../../config/config';
+import { environment } from 'src/environments/environment';
+
+const base_url = environment.base_url;
 
 @Injectable({
   providedIn: 'root'
@@ -9,29 +11,35 @@ export class SubirArchivoService {
   constructor() {
 
   }
-  subirArchivo(archivo: File, tipo: string, id: string) {
+  async subirArchivo(archivo: File, tipo: string, id: string) {
 
-    return new Promise((resolve, reject) => {
+    try {
+       const url = base_url + '/uploads/' + tipo + '/' + id;
+       console.log(url);
+       
+        let formData = new FormData();
+  
+        formData.append('imagen', archivo);
 
-      let formData = new FormData();
-      let xhr = new XMLHttpRequest();
-
-      formData.append('imagen', archivo, archivo.name);
-
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            console.log("imagen subida");
-            resolve(JSON.parse(xhr.response));
-          } else {
-            console.log("fallo la subida de imagen");
-            reject(xhr.response);
-          }
-        }
+        const  resp = await fetch (url, {
+          method: 'PUT',
+          headers: {
+            'x-token': localStorage.getItem('token') || ''
+          },
+          body: formData
+        })
+       const data = await resp.json();
+       if (data.ok){
+         return data.nombreArchivo
+       }else{
+         console.log(data.msg);
+         return false;
+       }
+        
       }
-      let url = URL_SERVICIOS + '/upload/' + tipo + '/' + id;
-      xhr.open('PUT', url, true);
-      xhr.send(formData);
-    });
+       catch (error) {
+      console.log(error);
+      return false;
+    }
   }
 }

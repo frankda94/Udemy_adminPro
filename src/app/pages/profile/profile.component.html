@@ -19,7 +19,7 @@
                             <input [disabled]="usuario.google" [ngModel]="usuario.email" name="email" type="email" class="form-control" placeholder="email" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">
+                    <button type="submit" class="btn btn-block btn-success waves-effect waves-light m-r-10" [disabled]="!formulario.valid">
                         <i class="fa fa-save"></i>
                         Guardar
                     </button>
@@ -32,7 +32,7 @@
             <div class="card-body" align="center">
                 <h4 class="card-title">Fotografía del Usuario</h4>
                 <h6 class="card-subtitle">nombre usuario</h6>
-                <img *ngIf="!imagenTmp" [src]="usuario.img | imagen" class="w150" alt="">
+                <img *ngIf="!imagenTmp" [src]="usuario.imagenUrl" class="w150" alt="">
                 <img *ngIf="imagenTmp" [src]="imagenTmp" class="w150" alt="">
                 <input (change)="seleccionImagen($event.target.files[0])" type="file" placeholder="">
                 <br><br>

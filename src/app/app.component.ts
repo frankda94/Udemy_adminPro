@@ -7,7 +7,7 @@ import { SettingsService } from './services/service.index';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'tarea1';
+  title = 'tareass';
 
   constructor(public settingsService: SettingsService) {
   }

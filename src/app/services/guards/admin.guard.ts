@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router } from '@angular/router';
+import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { UsuarioService } from '../usuarios/usuario.service';
 
 @Injectable({
@@ -13,11 +13,16 @@ export class AdminGuard implements CanActivate {
 
   }
 
-  canActivate() {
-    if (this.usuarioService.usuario.role === 'ADMIN_ROLE') {
+  canActivate(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot): boolean {
+    console.log("guard ADMIN ");
+
+    if (this.usuarioService.role === 'ADMIN_ROLE') {
       return true;
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dashboard']);
+      return false;
     }
   }
 

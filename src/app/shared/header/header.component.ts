@@ -12,13 +12,14 @@ import { Router } from '@angular/router';
 export class HeaderComponent implements OnInit {
 
   usuario: Usuario
+  imagenUrl: ''
 
   constructor(
     public usuarioService: UsuarioService,
     public router: Router) { }
 
   buscar(termino: string) {
-    this.router.navigate(["/busqueda", termino])
+    this.router.navigate(["dashboard/busqueda", termino])
   }
 
 

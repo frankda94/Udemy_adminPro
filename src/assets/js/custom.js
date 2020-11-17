@@ -5,7 +5,7 @@ Email: niravjoshi87@gmail.com
 File: js
 */
 //funcion de Javascript para llamarse dentro de angular
-function init_plugins() {
+const customInitFuncions = () => {
 
     $(function () {
         "use strict";
@@ -159,3 +159,5 @@ function init_plugins() {
 
     });
 }
+
+customInitFuncions();

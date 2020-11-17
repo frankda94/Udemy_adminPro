@@ -1,32 +1,38 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
-import { APP_ROUTES } from './app.routes';
-import { RegisterComponent } from './login/register.component';
 import { PagesModule } from './pages/pages.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ServiceModule } from './services/service.module';
-import { HttpClientModule } from '@angular/common/http';
-import { PagesComponent } from './pages/pages.component';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { SharedModule } from './shared/shared.module';
+import { AuthModule } from './auth/auth.module';
+import { AppRoutingModule } from './app-routing.module';
+import { NoPageFoundComponent } from './no-page-found/no-page-found.component';
+import { TokenInterceptorService } from './interceptors/token-interceptor.service';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    RegisterComponent,
-    PagesComponent
+    NoPageFoundComponent,
   ],
   imports: [
     BrowserModule,
-    APP_ROUTES,
+    AppRoutingModule,
     FormsModule,
     ServiceModule,
     ReactiveFormsModule,
     HttpClientModule,
-    SharedModule],
-  providers: [],
+    SharedModule,
+    AuthModule,
+    PagesModule,],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS, 
+      useClass: TokenInterceptorService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

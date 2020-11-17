@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalUploadService } from '../components/modal-upload/modal-upload.service';
 import {
-  LoginGuardGuard,
+  AuthGuard,
   AdminGuard,
   VerificaTokenGuard,
   SettingsService,
@@ -22,7 +22,7 @@ import {
     // HttpClient
   ],
   providers: [
-    LoginGuardGuard,
+    AuthGuard,
     AdminGuard,
     VerificaTokenGuard,
     SettingsService,

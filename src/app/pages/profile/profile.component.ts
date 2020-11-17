@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UsuarioService } from '../../services/service.index';
 import { Usuario } from '../../models/usuario.model';
-import swal from 'sweetalert';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-profile',
@@ -23,6 +23,7 @@ export class ProfileComponent implements OnInit {
   }
 
   actualizarUsuario(usuario: Usuario) {
+
     this.usuario.nombre = usuario.nombre;
 
     if (!this.usuario.google) {
@@ -30,6 +31,7 @@ export class ProfileComponent implements OnInit {
     }
 
     this.usuarioService.actualizarUsuario(this.usuario).subscribe(resp => {
+      console.log(resp)
     });
   }
 
@@ -40,7 +42,7 @@ export class ProfileComponent implements OnInit {
     }
 
     if (archivo.type.indexOf('image') < 0) {
-      swal("Solo imagenes", "el archivo selleccionado debe ser una imagen", 'error');
+      Swal.fire("Solo imagenes", "el archivo selleccionado debe ser una imagen", 'error');
       this.imagenSubir = null;
       return;
     }
@@ -48,7 +50,7 @@ export class ProfileComponent implements OnInit {
     this.imagenSubir = archivo;
 
     let reader = new FileReader();
-    let urlImgTemp = reader.readAsDataURL(archivo);
+    reader.readAsDataURL(archivo);
     reader.onloadend = () => this.imagenTmp = reader.result;
   }
 

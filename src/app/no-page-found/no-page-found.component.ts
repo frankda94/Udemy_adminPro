@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 
-declare function init_plugins();
 
 @Component({
   selector: 'app-no-page-found',
@@ -9,7 +8,7 @@ declare function init_plugins();
   .error-box {
     height: 100%;
     position: fixed;
-    background: url(../../../assets/images/background/error-bg.jpg) no-repeat center center #fff;
+    background: url(../../assets/images/background/error-bg.jpg) no-repeat center center #fff;
     width: 100%; }
     .error-box .footer {
       width: 100%;
@@ -31,7 +30,6 @@ export class NoPageFoundComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    init_plugins();
   }
 
 }

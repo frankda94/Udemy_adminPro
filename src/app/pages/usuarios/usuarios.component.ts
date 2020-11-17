@@ -1,17 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Usuario } from '../../models/usuario.model';
 import { UsuarioService } from '../../services/usuarios/usuario.service';
-import swal from 'sweetalert';
+import Swal from 'sweetalert2';
 import { ModalUploadService } from '../../components/modal-upload/modal-upload.service';
+import { delay } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-usuarios',
   templateUrl: './usuarios.component.html',
   styleUrls: ['./usuarios.component.css']
 })
-export class UsuariosComponent implements OnInit {
+export class UsuariosComponent implements OnInit, OnDestroy {
 
+  imgSubs: Subscription;
   usuarios: Usuario[] = [];
+  usuariosTmp: Usuario[] = [];
   desde: number = 0;
   cargando: boolean = true;
   totalRegistros: number = 0;
@@ -23,10 +27,19 @@ export class UsuariosComponent implements OnInit {
 
   ngOnInit() {
     this.cargarUsuarios();
-    this.modalUploadService.notificacion
-      .subscribe(resp => {
+    this.imgSubs = this.modalUploadService.notificacion
+      .pipe(
+        delay(300)
+      )
+      .subscribe(img => {
+        console.log(img);
         this.cargarUsuarios();
       })
+  }
+
+  ngOnDestroy(){
+    //prevenir fugas de memoria
+    this.imgSubs.unsubscribe();
   }
 
   cargarUsuarios() {
@@ -35,6 +48,7 @@ export class UsuariosComponent implements OnInit {
       .subscribe((result: any) => {
         this.totalRegistros = result.total;
         this.usuarios = result.usuarios;
+        this.usuariosTmp = result.usuarios;
         this.cargando = false;
       })
   }
@@ -55,14 +69,13 @@ export class UsuariosComponent implements OnInit {
 
   buscarUsuarios(termino: string) {
 
-    if (termino.length <= 0) {
-      this.cargarUsuarios();
-      return;
+    if (termino.length === 0) {
+      return this.usuarios = this.usuariosTmp;
     }
 
     this.cargando = true;
-    this.usuarioService.buscarUsuarios(termino)
-      .subscribe((usuarios: Usuario[]) => {
+    this.usuarioService.buscarUsuarios("usuarios",termino)
+      .subscribe((usuarios) => {
         this.usuarios = usuarios;
         this.cargando = false;
       });
@@ -70,19 +83,21 @@ export class UsuariosComponent implements OnInit {
 
   borrarUsuario(usuario: Usuario) {
     if (usuario._id === this.usuarioService.usuario._id) {
-      swal('No se puede borrar usuario', 'no se puede borrar así mismo', 'error')
+      Swal.fire('No se puede borrar usuario', 'no se puede borrar así mismo', 'error')
       return;
     }
-    swal({
+      Swal.fire({
       title: "Estas seguro de eliminar el usuario",
       text: 'Una vez eliminado el usuario ' + usuario.nombre + ' no podrá ser recuperado',
       icon: 'warning',
-      buttons: ['aceptar', 'cancelar'],
-      dangerMode: true,
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, eliminarlo!'
     }).then(borrar => {
-      if (!borrar) {
+      if (borrar.isConfirmed) {
         this.usuarioService.borrarUsuario(usuario._id)
-          .subscribe(borrado => {
+          .subscribe(() => {
             this.cargarUsuarios();
           })
       }
@@ -90,13 +105,16 @@ export class UsuariosComponent implements OnInit {
   }
 
   actualizarRoleUsuario(usuario: Usuario) {
-    this.usuarioService.actualizarUsuario(usuario)
-      .subscribe(res => {
-      })
+    
   }
 
   mostrarModal(id: string) {
     this.modalUploadService.mostrarModal('usuarios', id);
+  }
+
+  cambiarRole(usuario: Usuario){
+    this.usuarioService.actualizarRol(usuario).subscribe(resp => 
+      console.log(resp));
   }
 
 }
