@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { PagesComponent } from './pages.component';
 import { AuthGuard } from '../services/guards/auth.guard';
 
-/* rutas v2 */
+/* rutas vmaster */
 const pagesRoutes: Routes = [
     {
         path: 'dashboard',
